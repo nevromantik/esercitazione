@@ -6,22 +6,27 @@ public class Program
     static void Main()
     {
         Task task1 = new Task(1, "giocare", false, true);
+        Subtask subtask1 = new Subtask(1, "Subtask numero !");
+        task1.Subtasks.Add(subtask1);
         Task task2 = new Task(2, "studiare", false, false);
         Task task3 = new Task(3, "lavorare", false, true);
         List<Task> tasks = new List<Task>();
         tasks.Add(task1);
+        
         tasks.Add(task2);
         tasks.Add(task3);
+
         int userChoice;
-        mainMenu: 
+    mainMenu:
         Console.WriteLine(":: DASHBOARD MAIN MENU :: \n" +
                "Seleziona la voce desiderata \n" +
                "1. Visualizza tutti i tasks \n" +
                "2. Aggiungi nuovi task \n" +
                "3. Visualizza gli urgenti \n" +
                "4. Modifica un task \n" +
-               "5. Visualizza i completati \n" 
+               "5. Visualizza i completati \n"
               );
+       
         do
         {
            
@@ -106,6 +111,10 @@ public class Program
             foreach (Task task in tasks)
             {
                 Console.WriteLine($" ID: {task.Id} NAME: { task.Name} PRIORITY: {task.Urgent}  STATE: {task.Completed}");
+                foreach(Subtask sub in task.Subtasks)
+                {
+                    Console.WriteLine($"SUBTASKS: {sub.SubtaskNAME}");
+                }
             }
         }
 
@@ -194,6 +203,7 @@ public class Program
         string taskNAME;
         bool isCompleted = false;
         bool isUrgent;
+        List<Subtask> subtasks; 
 
 
 
@@ -202,8 +212,12 @@ public class Program
             this.taskID = taskID;
             this.taskNAME = taskNAME;
             this.isCompleted = isCompleted;
-            this.isUrgent = isUrgent; 
+            this.isUrgent = isUrgent;
+            this.subtasks = new List<Subtask>();
         }
+
+
+        
 
         public string Name
         {
@@ -239,8 +253,25 @@ public class Program
             }
         }
 
+        public List<Subtask> Subtasks
+        {
+            get { return this.subtasks; }
+        }
 
 
 
+
+    }
+}
+
+public class Subtask
+{
+    public int SubtaskID { get; set; }
+    public string SubtaskNAME { get; set; }
+
+    public Subtask(int subtaskID, string subtaskName)
+    {
+        this.SubtaskID = subtaskID;
+        this.SubtaskNAME = subtaskName;
     }
 }
