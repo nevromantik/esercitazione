@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class Program
 {
@@ -26,7 +29,8 @@ public class Program
                "2. Aggiungi nuovi task \n" +
                "3. Visualizza gli urgenti \n" +
                "4. Modifica un task \n" +
-               "5. Visualizza i completati \n"
+               "5. Visualizza i completati \n" +
+               "6. Visualizza il meteo"
               );
        
         do
@@ -79,7 +83,17 @@ public class Program
                         goto mainMenu;
                     }
                     break;
-                case > 4 :
+                case 6:
+                    showWeather();
+                    if (userChoice == 0)
+                    {
+                        Console.Clear();
+
+                        goto mainMenu;
+                    }
+                    break;
+
+                case > 6 :
                     Console.WriteLine("Comando inserito non valido");
                     goToSection("0", "tornare al menu principale");
                     if (userChoice == 0)
@@ -210,6 +224,44 @@ public class Program
 
         }
 
+        async void showWeather()
+        {
+            string apiUrl = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Rome,IT?key=DXJFUU5N4LFNRJFJUP4HGFTP8&";
+            using HttpClient client = new HttpClient(); 
+            try
+
+            {   
+
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responsebody = await response.Content.ReadAsStringAsync();
+                    // Analizza il corpo della risposta JSON
+                    JObject json = JObject.Parse(responsebody);
+
+                    // Accedi alla proprietà specifica
+                    string cityName = json["address"].ToString();
+
+                    JToken day = json["days"][0]; // Prendi il primo giorno dall'array "days"
+                    double tempMin = (double)day["tempmin"];
+                    double tempMax = (double)day["tempmax"];
+                    string condition = (string)json["description"];
+                    Console.WriteLine(cityName);
+                    Console.WriteLine($"{tempMin}°  - {tempMax}");
+                    Console.WriteLine(condition);
+                }
+                else
+                {
+                    Console.WriteLine($"La richiesta ha restituito un codice di stato non valido: {response.StatusCode}");
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Si è verificato un errore durante la richiesta: {ex.Message}");
+
+            }
+        }
 
     }
 
