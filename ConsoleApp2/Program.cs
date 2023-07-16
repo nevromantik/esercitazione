@@ -5,11 +5,13 @@ public class Program
 {
     static void Main()
     {
-        Task task1 = new Task(1, "giocare", false, true);
-        Subtask subtask1 = new Subtask(1, "Subtask numero !");
+        string uniqueId = Guid.NewGuid().ToString();
+
+        Task task1 = new Task(uniqueId, "giocare", false, true);
+        Subtask subtask1 = new Subtask(uniqueId, "Subtask numero !");
         task1.Subtasks.Add(subtask1);
-        Task task2 = new Task(2, "studiare", false, false);
-        Task task3 = new Task(3, "lavorare", false, true);
+        Task task2 = new Task(uniqueId, "studiare", false, false);
+        Task task3 = new Task(uniqueId, "lavorare", false, true);
         List<Task> tasks = new List<Task>();
         tasks.Add(task1);
         
@@ -130,8 +132,7 @@ public class Program
             do
             {
 
-                int suggestedID = tasks[tasks.Count - 1].Id;
-                int convertedID = suggestedID + 1;
+                
 
                 Console.WriteLine("Inserisci Nome task:");
 
@@ -141,12 +142,30 @@ public class Program
 
                 bool isUrgent = bool.Parse(Console.ReadLine());
 
-                Task newTask = new Task(convertedID, name, false, isUrgent); 
+                string uniqueId = Guid.NewGuid().ToString();
+
+                Task newTask = new Task(uniqueId, name, false, isUrgent); 
 
                 tasks.Add(newTask);
 
-                
+                Console.WriteLine("Inserisci dei subtasks!");
+                string subtaskname;
+                do
+                {
+                    subtaskname = Console.ReadLine();
+                    if (subtaskname != "0")
+                    {
+                        string newuniqueid = Guid.NewGuid().ToString();
+
+                        Subtask newsubtasks = new Subtask(newuniqueid, subtaskname);
+                        newTask.Subtasks.Add(newsubtasks);
+                    }
+                } while (subtaskname != "0");
+
+
+
                 Console.WriteLine("Digita 2 per aggiungere un nuovo task oppure");
+
                 goToSection("0", "tornare al menu principale");
 
             } while (userChoice != 0);
@@ -168,7 +187,7 @@ public class Program
         {
             Console.WriteLine("::MODIFICA TASK::");
             Console.WriteLine("Inserisci l'id del task che vuoi modificare: ");
-            int selectedTaskId = int.Parse(Console.ReadLine());
+            string selectedTaskId = Console.ReadLine();
             Task selectedTask = tasks.Find(task => task.Id == selectedTaskId);
             Console.Clear();
             Console.WriteLine($"Titolo task: {selectedTask.Name} \n" +
@@ -199,7 +218,7 @@ public class Program
 
     public class Task
     {
-        int taskID;
+        string taskID;
         string taskNAME;
         bool isCompleted = false;
         bool isUrgent;
@@ -207,7 +226,7 @@ public class Program
 
 
 
-        public Task(int taskID, string taskNAME, bool isCompleted, bool isUrgent)
+        public Task(string taskID, string taskNAME, bool isCompleted, bool isUrgent)
         {
             this.taskID = taskID;
             this.taskNAME = taskNAME;
@@ -225,7 +244,7 @@ public class Program
             set { taskNAME = value; }
         }
 
-        public int Id
+        public string Id
         {
             get { return this.taskID; }
             set { taskID = value; }
@@ -266,10 +285,10 @@ public class Program
 
 public class Subtask
 {
-    public int SubtaskID { get; set; }
+    public string SubtaskID { get; set; }
     public string SubtaskNAME { get; set; }
 
-    public Subtask(int subtaskID, string subtaskName)
+    public Subtask(string subtaskID, string subtaskName)
     {
         this.SubtaskID = subtaskID;
         this.SubtaskNAME = subtaskName;
